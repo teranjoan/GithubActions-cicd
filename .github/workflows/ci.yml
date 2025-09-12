@@ -3,8 +3,11 @@ name: CI
 on:
   push:
     branches: [ master ]
+# Pull Request: Cuando creas o actualizas un pull request cuyo destino es master. Esto permite validar los cambios antes de integrarlos.
   pull_request:
     branches: [ master ]
+# Manual: Desde la pestaña Actions en GitHub, usando el botón "Run workflow" gracias a 'workflow_dispatch'.
+  workflow_dispatch:
 
 jobs:
   build:
