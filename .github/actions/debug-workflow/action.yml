@@ -1,0 +1,45 @@
+name: Debug Workflow
+description: Imprime información de debug en cada etapa del workflow.
+runs:
+  using: "composite"
+  steps:
+    - name: Debug - Inicio workflow
+      run: |
+        echo "[DEBUG] Iniciando workflow CI-debug-tests"
+        echo "Fecha: $(date)"
+      shell: bash
+    - name: Debug - Node.js version
+      run: echo "[DEBUG] Node.js version instalada: $(node -v)"
+      shell: bash
+    - name: Debug - Variables de entorno
+      run: |
+        echo "NODE_ENV: $NODE_ENV"
+        echo "API_URL: $API_URL"
+        echo "[DEBUG] Variables de entorno actuales:"
+        printenv | grep -E 'NODE_ENV|API_URL|SOLO_PASO'
+      shell: bash
+    - name: Debug - Dependencias instaladas
+      run: |
+        cd react-app
+        echo "[DEBUG] Dependencias instaladas:"
+        npm list --depth=0
+      shell: bash
+    - name: Debug - Variable SOLO_PASO
+      run: echo "[DEBUG] SOLO_PASO: $SOLO_PASO"
+      shell: bash
+    - name: Debug - Secretos disponibles
+      run: |
+        echo "[DEBUG] ¿Secreto ACCESS_TOKEN presente?"
+        if [ -z "${{ secrets.ACCESS_TOKEN }}" ]; then echo "No definido"; else echo "Definido"; fi
+        echo "[DEBUG] ¿Secreto API_KEY presente?"
+        if [ -z "${{ secrets.API_KEY }}" ]; then echo "No definido"; else echo "Definido"; fi
+      shell: bash
+    - name: Debug - Estado de tests
+      run: echo "[DEBUG] Última salida de tests arriba. Revisa logs para detalles."
+      shell: bash
+    - name: Debug - Build finalizado
+      run: echo "[DEBUG] Build finalizado. Archivos generados en react-app/build"
+      shell: bash
+    - name: Debug - Fin workflow
+      run: echo "[DEBUG] Workflow CI-debug-tests finalizado."
+      shell: bash
