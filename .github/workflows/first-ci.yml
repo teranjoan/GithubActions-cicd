@@ -12,34 +12,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-        NODE_ENV: "production"
-        API_URL: "https://api.midominio.com"
     steps:
       - name: Checkout code
-    # Descarga el código fuente del repositorio en el runner de GitHub Actions
         uses: actions/checkout@v3
       - name: Set up Node.js
-    # Configura el entorno de Node.js con la versión especificada
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Mostrar variable de entorno
-        run: |
-            echo "NODE_ENV: $NODE_ENV"
-            echo "API_URL: $API_URL"
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: |
           cd react-app
           npm install
-      - name: Usar variable solo en este paso
-        env:
-          SOLO_PASO: "valor-unico"
-        run: echo "Variable SOLO_PASO $SOLO_PASO"
-      - name: Usar un secreto (debes crearlo en GitHub como MI_SECRETO)
-        run: |
-            echo "Token de acceso: ${{ secrets.ACCESS_TOKEN }}"
-            echo "Clave API: ${{ secrets.API_KEY }}"
       - name: Run tests
         run: |
           cd react-app
