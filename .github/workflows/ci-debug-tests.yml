@@ -49,7 +49,8 @@ jobs:
             SOLO_PASO: "valor-unico"
           run: echo "Variable SOLO_PASO $SOLO_PASO"
         - name: Debug - Variable SOLO_PASO
-          run: echo "[DEBUG] SOLO_PASO: $SOLO_PASO"
+          run: |
+            echo "[DEBUG] SOLO_PASO: $SOLO_PASO"
         - name: Usar un secreto (debes crearlo en GitHub como MI_SECRETO)
           run: |
             echo "Token de acceso: ${{ secrets.ACCESS_TOKEN }}"
