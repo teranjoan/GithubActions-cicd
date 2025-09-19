@@ -44,21 +44,6 @@ jobs:
   #       with:
   #         dockerhub_user: ${{ secrets.dockerhub_user }}
   #         dockerhub_password: ${{ secrets.dockerhub_password }}
-  print-vars:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}  # Usar el mismo entorno para debug
-    steps:
-      - name: Print all GitHub vars and secrets
-        run: |
-          echo "=== GitHub Context Debug ==="
-          echo "Environment: ${{ inputs.environment }}"
-          echo "Available vars context:"
-          echo "MY_ENV_VAR from vars: '${{ vars.MY_ENV_VAR }}'"
-          echo "MY_REPO_VAR from vars: '${{ vars.MY_REPO_VAR }}'"
-          echo ""
-          echo "=== All Environment Variables ==="
-          env | sort
-          echo "=== End Debug ==="
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}  # Esto permite acceder a las variables del entorno específico
@@ -76,7 +61,7 @@ jobs:
             SECRETO_4=${{ secrets.SECRETO_4 }}
             DOCKERHUB_USER=${{ secrets.DOCKERHUB_USER }}
             DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKER_VARIABLES: |
+          ENV_VARIABLES: |
             # Variables adicionales para docker-compose
             MY_ENV_VAR=${{ vars.MY_ENV_VAR }}
             MY_REPO_VAR=${{ vars.MY_REPO_VAR }}

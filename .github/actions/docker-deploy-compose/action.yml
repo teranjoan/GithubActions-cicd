@@ -5,75 +5,51 @@ inputs:
     description: "Entorno de despliegue (dev, prd, stg, tst)"
     required: true
     default: "dev"
-  # secrets_json:
-  #   description: "Secrets en formato JSON"
-  #   required: false
   
 runs:
   using: "composite"
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Configure environment file
+    - name: Configure environment file (.env) (Step 1/3)
       run: |
-        echo "Configurando entorno: ${{ inputs.environment }}"
+        echo "Configurando archivo .env si existe. ${{ inputs.environment }}"
         if [ -f ".env.${{ inputs.environment }}" ]; then
           cp ".env.${{ inputs.environment }}" .env
           echo "✅ Archivo .env.${{ inputs.environment }} copiado a .env"
-          echo "Contenido del archivo .env:"
-          cat .env
         else
-          echo "❌ Error: Archivo .env.${{ inputs.environment }} no encontrado"
+          echo "⚠️  Advertencia: Archivo .env.${{ inputs.environment }} no encontrado"
           echo "Archivos .env disponibles:"
           ls -la .env.* 2>/dev/null || echo "No se encontraron archivos .env.*"
-          exit 1
         fi
       shell: bash
-    - name: Process secrets
-      run: |
-        # Procesar secretos desde ALL_SECRETS y agregarlos al .env
+    - name: Process secrets  (Step 2/3)
+      run: | 
+        # Procesar secretos y agregarlos al .env
         if [ ! -z "$ALL_SECRETS" ]; then
-          echo "=== Procesando secretos ==="
-          echo "Secretos recibidos:"
-          echo "$ALL_SECRETS"
-          echo ""
-          
+          echo "🔑 Se encontro la variable ALL_SECRETS, se inyectaran en .env"
           # Agregar secretos al archivo .env (ya están en formato KEY=VALUE)
           echo "" >> .env
           echo "# === SECRETS AGREGADOS AUTOMÁTICAMENTE ===" >> .env
           echo "$ALL_SECRETS" >> .env
-          
           echo "✅ Secretos agregados al archivo .env"
-          echo ""
-          echo "=== Archivo .env final ==="
-          cat .env
-          echo "=== EOF Archivo .env final ==="
         else
-          echo "⚠️  No se encontraron secretos en ALL_SECRETS"
+          echo "⚠️ No se encontraron secretos en ALL_SECRETS"
         fi
-        
-        echo ""
       shell: bash
-    - name: Process variables
+    - name: Process variables (Step 3/3)
       run: |
-        # Procesar variables desde DOCKER_VARIABLES y agregarlos al .env
-        if [ ! -z "$DOCKER_VARIABLES" ]; then
-          echo "=== Procesando variables ==="
-          echo "Variables recibidas:"
-          echo "$DOCKER_VARIABLES"
-          echo ""
-          
+        # Procesar variables desde ENV_VARIABLES y agregarlos al .env
+        if [ ! -z "$ENV_VARIABLES" ]; then
+          echo "🔧 Se encontro la variable ENV_VARIABLES, se inyectaran en .env"
+
           # Agregar variables al archivo .env (ya están en formato KEY=VALUE)
           echo "" >> .env
           echo "# === VARIABLES AGREGADOS AUTOMÁTICAMENTE ===" >> .env
-          echo "$DOCKER_VARIABLES" >> .env
+          echo "$ENV_VARIABLES" >> .env
 
           echo "✅ Variables agregados al archivo .env"
-          echo ""
-          echo "=== Archivo .env final ==="
-          cat .env
-          echo "=== EOF Archivo .env final ==="
         else
-          echo "⚠️  No se encontraron variables en DOCKER_VARIABLES"
+          echo "⚠️  No se encontraron variables en ENV_VARIABLES"
         fi
       shell: bash
