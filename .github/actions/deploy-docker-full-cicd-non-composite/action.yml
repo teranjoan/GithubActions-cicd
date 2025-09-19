@@ -1,0 +1,23 @@
+description: Ejecuta el pipeline completo= build, test, docker build/push y despliegue con docker-compose usando otros actions.
+name: Deploy Docker Full CICD
+inputs:
+  dockerhub_user:
+    description: "Usuario de DockerHub"
+    required: true
+  dockerhub_password:
+    description: "Password de DockerHub"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Build React App
+      uses: teranjoan/GithubActions/.github/actions/build-react@master
+    - name: Test React App
+      uses: teranjoan/GithubActions/.github/actions/test-react@master
+    - name: Docker Build & Push
+      uses: teranjoan/GithubActions/.github/actions/docker-build-push@master
+      with:
+        dockerhub_user: ${{ inputs.dockerhub_user }}
+        dockerhub_password: ${{ inputs.dockerhub_password }}
+    - name: Docker Compose Deploy
+      uses: teranjoan/GithubActions/.github/actions/docker-deploy-compose@master
