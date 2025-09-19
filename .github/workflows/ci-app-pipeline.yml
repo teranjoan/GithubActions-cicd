@@ -8,40 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy-docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Build React App
-        uses: teranjoan/GithubActions/.github/actions/build-react@master
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Test React App
-        uses: teranjoan/GithubActions/.github/actions/test-react@master
-
-  docker:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Docker Build & Push
-        uses: teranjoan/GithubActions/.github/actions/docker-build-push@master
+      - name: Docker Compose Deploy
+        uses: teranjoan/github-actions-templates/.github/actions/deploy-docker-full-cicd@master
         with:
           dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
           dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: docker
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Docker Compose Deploy
-        uses: teranjoan/github-actions-templates/.github/actions/docker-deploy-compose@master
