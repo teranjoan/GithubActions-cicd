@@ -55,9 +55,13 @@ jobs:
           environment: ${{ inputs.environment }}
         env:
           # Pasar secrets como variables de entorno al action en formato KEY=VALUE
-          SECRETEISHONSS: |
+          ALL_SECRETS: |
             BASE_DE_DATOS_NAME=${{ secrets.BASE_DE_DATOS_NAME }}
             SECRETO_1=${{ secrets.SECRETO_1 }}
             SECRETO_4=${{ secrets.SECRETO_4 }}
             DOCKERHUB_USER=${{ secrets.DOCKERHUB_USER }}
             DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKER_VARIABLES: |
+            # Variables adicionales para docker-compose
+            MY_ENV_VAR=${{ vars.MY_ENV_VAR }}
+            MY_REPO_VAR=${{ vars.MY_REPO_VAR }}

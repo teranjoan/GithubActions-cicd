@@ -5,9 +5,10 @@ inputs:
     description: "Entorno de despliegue (dev, prd, stg, tst)"
     required: true
     default: "dev"
-  secrets_json:
-    description: "Secrets en formato JSON"
-    required: false
+  # secrets_json:
+  #   description: "Secrets en formato JSON"
+  #   required: false
+  
 runs:
   using: "composite"
   steps:
@@ -28,35 +29,51 @@ runs:
           exit 1
         fi
       shell: bash
-    - name: Process secrets and deploy
+    - name: Process secrets
       run: |
-        echo "Desplegando en entorno: ${{ inputs.environment }}"
-        
-        # Procesar secretos desde SECRETEISHONSS y agregarlos al .env
-        if [ ! -z "$SECRETEISHONSS" ]; then
+        # Procesar secretos desde ALL_SECRETS y agregarlos al .env
+        if [ ! -z "$ALL_SECRETS" ]; then
           echo "=== Procesando secretos ==="
           echo "Secretos recibidos:"
-          echo "$SECRETEISHONSS"
+          echo "$ALL_SECRETS"
           echo ""
           
           # Agregar secretos al archivo .env (ya están en formato KEY=VALUE)
           echo "" >> .env
           echo "# === SECRETS AGREGADOS AUTOMÁTICAMENTE ===" >> .env
-          echo "$SECRETEISHONSS" >> .env
+          echo "$ALL_SECRETS" >> .env
           
           echo "✅ Secretos agregados al archivo .env"
           echo ""
           echo "=== Archivo .env final ==="
           cat .env
-          echo "=========================="
+          echo "=== EOF Archivo .env final ==="
         else
-          echo "⚠️  No se encontraron secretos en SECRETEISHONSS"
+          echo "⚠️  No se encontraron secretos en ALL_SECRETS"
         fi
         
         echo ""
-        echo "=== Variables de entorno disponibles ==="
-        env | grep -E "(BASE_DE_DATOS|SECRETO|DOCKERHUB)" || echo "No se encontraron variables relevantes"
-        echo "========================================"
+    - name: Process variables
+      run: |
+        # Procesar variables desde DOCKER_VARIABLES y agregarlos al .env
+        if [ ! -z "$DOCKER_VARIABLES" ]; then
+          echo "=== Procesando variables ==="
+          echo "Variables recibidas:"
+          echo "$DOCKER_VARIABLES"
+          echo ""
+          
+          # Agregar variables al archivo .env (ya están en formato KEY=VALUE)
+          echo "" >> .env
+          echo "# === VARIABLES AGREGADOS AUTOMÁTICAMENTE ===" >> .env
+          echo "$DOCKER_VARIABLES" >> .env
+
+          echo "✅ Variables agregados al archivo .env"
+          echo ""
+          echo "=== Archivo .env final ==="
+          cat .env
+          echo "=== EOF Archivo .env final ==="
+        else
+          echo "⚠️  No se encontraron variables en DOCKER_VARIABLES"
+        fi
         
-        # docker-compose -f docker-compose.yml up -d --remove-orphans
       shell: bash
