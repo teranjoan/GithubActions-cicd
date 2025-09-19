@@ -8,11 +8,11 @@ on:
         required: true
         type: string
         default: "dev"
-    secrets:
-      dockerhub_user:
-        required: true
-      dockerhub_password:
-        required: true
+    # secrets:
+    #   dockerhub_user:
+    #     required: true
+    #   dockerhub_password:
+    #     required: true
 
 jobs:
   # build:
