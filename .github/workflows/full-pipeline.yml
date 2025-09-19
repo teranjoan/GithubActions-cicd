@@ -7,7 +7,6 @@ on:
         required: true
       dockerhub_password:
         required: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
