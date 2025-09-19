@@ -28,27 +28,35 @@ runs:
           exit 1
         fi
       shell: bash
-    - name: Deploy con docker-compose
+    - name: Process secrets and deploy
       run: |
         echo "Desplegando en entorno: ${{ inputs.environment }}"
-        echo "magic secretitxs"
-        echo $SECRETEISHONSS
-        echo "=== Secrets disponibles como variables de entorno ==="
-        echo "BASE_DE_DATOS_NAME: $BASE_DE_DATOS_NAME"
-        echo "SECRETO_1: $SECRETO_1"
-        echo "SECRETO_4: $SECRETO_4"
-        echo "DOCKERHUB_USER: $DOCKERHUB_USER"
-        echo "DOCKERHUB_PASSWORD: [OCULTO]"
-        echo "=================================================="
         
-        # Exportar variables para docker-compose
-        export BASE_DE_DATOS_NAME="$BASE_DE_DATOS_NAME"
-        export SECRETO_1="$SECRETO_1"
-        export SECRETO_4="$SECRETO_4"
-        export DOCKERHUB_USER="$DOCKERHUB_USER"
-        export DOCKERHUB_PASSWORD="$DOCKERHUB_PASSWORD"
-
-        env
+        # Procesar secretos desde SECRETEISHONSS y agregarlos al .env
+        if [ ! -z "$SECRETEISHONSS" ]; then
+          echo "=== Procesando secretos ==="
+          echo "Secretos recibidos:"
+          echo "$SECRETEISHONSS"
+          echo ""
+          
+          # Agregar secretos al archivo .env (ya están en formato KEY=VALUE)
+          echo "" >> .env
+          echo "# === SECRETS AGREGADOS AUTOMÁTICAMENTE ===" >> .env
+          echo "$SECRETEISHONSS" >> .env
+          
+          echo "✅ Secretos agregados al archivo .env"
+          echo ""
+          echo "=== Archivo .env final ==="
+          cat .env
+          echo "=========================="
+        else
+          echo "⚠️  No se encontraron secretos en SECRETEISHONSS"
+        fi
+        
+        echo ""
+        echo "=== Variables de entorno disponibles ==="
+        env | grep -E "(BASE_DE_DATOS|SECRETO|DOCKERHUB)" || echo "No se encontraron variables relevantes"
+        echo "========================================"
         
         # docker-compose -f docker-compose.yml up -d --remove-orphans
       shell: bash
