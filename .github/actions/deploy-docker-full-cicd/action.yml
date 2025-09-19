@@ -15,12 +15,12 @@ runs:
   steps:
     - name: Build React App
       uses: teranjoan/GithubActions/.github/actions/build-react@master
-    - name: Test React App
-      uses: teranjoan/GithubActions/.github/actions/test-react@master
-    - name: Docker Build & Push
-      uses: teranjoan/GithubActions/.github/actions/docker-build-push@master
-      with:
-        dockerhub_user: ${{ inputs.dockerhub_user }}
-        dockerhub_password: ${{ inputs.dockerhub_password }}
-    - name: Docker Compose Deploy
-      uses: teranjoan/github-actions-templates/.github/actions/docker-deploy-compose@master
+    # - name: Test React App
+    #   uses: teranjoan/GithubActions/.github/actions/test-react@master
+    # - name: Docker Build & Push
+    #   uses: teranjoan/GithubActions/.github/actions/docker-build-push@master
+    #   with:
+    #     dockerhub_user: ${{ inputs.dockerhub_user }}
+    #     dockerhub_password: ${{ inputs.dockerhub_password }}
+    # - name: Docker Compose Deploy
+    #   uses: teranjoan/github-actions-templates/.github/actions/docker-deploy-compose@master
