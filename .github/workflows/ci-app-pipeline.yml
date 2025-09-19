@@ -1,0 +1,47 @@
+name: CI App Pipeline
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build React App
+        uses: ./.github/actions/build-react
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Test React App
+        uses: ./.github/actions/test-react
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Docker Build & Push
+        uses: ./.github/actions/docker-build-push
+        with:
+          dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Docker Compose Deploy
+        uses: ./.github/actions/docker-deploy-compose

@@ -1,0 +1,15 @@
+name: Build React App
+description: Construye una aplicación ReactJS.
+runs:
+  using: "composite"
+  steps:
+    - name: Instalar dependencias
+      run: |
+        cd react-app
+        npm install
+      shell: bash
+    - name: Build app
+      run: |
+        cd react-app
+        npm run build
+      shell: bash

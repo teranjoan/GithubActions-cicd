@@ -1,0 +1,24 @@
+name: Docker Build & Push
+description: Construye la imagen Docker y la sube a DockerHub.
+runs:
+  using: "composite"
+  steps:
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ inputs.dockerhub_user }}/react-app:latest ./react-app
+      shell: bash
+    - name: Login to DockerHub
+      run: |
+        echo ${{ inputs.dockerhub_password }} | docker login -u ${{ inputs.dockerhub_user }} --password-stdin
+      shell: bash
+    - name: Push Docker image
+      run: |
+        docker push ${{ inputs.dockerhub_user }}/react-app:latest
+      shell: bash
+inputs:
+  dockerhub_user:
+    description: "Usuario de DockerHub"
+    required: true
+  dockerhub_password:
+    description: "Password de DockerHub"
+    required: true

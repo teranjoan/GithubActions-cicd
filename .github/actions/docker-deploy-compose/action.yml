@@ -1,0 +1,9 @@
+name: Docker Compose Deploy
+description: Despliega la app usando docker-compose.
+runs:
+  using: "composite"
+  steps:
+    - name: Deploy con docker-compose
+      run: |
+        docker-compose -f docker-compose.yml up -d --remove-orphans
+      shell: bash

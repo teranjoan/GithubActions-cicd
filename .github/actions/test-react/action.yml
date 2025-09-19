@@ -1,0 +1,15 @@
+name: Test React App
+description: Ejecuta los tests de una aplicación ReactJS.
+runs:
+  using: "composite"
+  steps:
+    - name: Instalar dependencias
+      run: |
+        cd react-app
+        npm install
+      shell: bash
+    - name: Ejecutar tests
+      run: |
+        cd react-app
+        npm test -- --watchAll=false
+      shell: bash
