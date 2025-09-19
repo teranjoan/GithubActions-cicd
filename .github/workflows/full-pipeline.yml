@@ -44,7 +44,13 @@ jobs:
   #       with:
   #         dockerhub_user: ${{ secrets.dockerhub_user }}
   #         dockerhub_password: ${{ secrets.dockerhub_password }}
-
+  print-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print all GitHub vars
+        run: |
+          echo "GitHub Context:"
+          env
   deploy:
     runs-on: ubuntu-latest
     # needs: docker
