@@ -1,6 +1,5 @@
-description: Ejecuta el pipeline completo: build, test, docker build/push y despliegue con docker-compose usando otros actions.
+description: Ejecuta el pipeline completo= build, test, docker build/push y despliegue con docker-compose usando otros actions.
 name: Deploy Docker Full CICD
-description: Ejecuta el pipeline completo: build, test, docker build/push y despliegue con docker-compose usando otros actions.
 inputs:
   dockerhub_user:
     description: "Usuario de DockerHub"
