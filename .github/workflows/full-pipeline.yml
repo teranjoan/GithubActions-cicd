@@ -7,7 +7,7 @@ on:
         description: "Entorno de despliegue (dev, prd, stg, tst)"
         required: true
         type: string
-        # default: "dev"
+        default: "dev"
     secrets:
       dockerhub_user:
         required: true
