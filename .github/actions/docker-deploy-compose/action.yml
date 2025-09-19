@@ -53,6 +53,7 @@ runs:
         fi
         
         echo ""
+      shell: bash
     - name: Process variables
       run: |
         # Procesar variables desde DOCKER_VARIABLES y agregarlos al .env
@@ -75,5 +76,4 @@ runs:
         else
           echo "⚠️  No se encontraron variables en DOCKER_VARIABLES"
         fi
-        
       shell: bash
