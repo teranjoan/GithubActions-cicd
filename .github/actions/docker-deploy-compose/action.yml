@@ -31,7 +31,8 @@ runs:
     - name: Deploy con docker-compose
       run: |
         echo "Desplegando en entorno: ${{ inputs.environment }}"
-        
+        echo "magic secretitxs"
+        echo $SECRETEISHONSS
         echo "=== Secrets disponibles como variables de entorno ==="
         echo "BASE_DE_DATOS_NAME: $BASE_DE_DATOS_NAME"
         echo "SECRETO_1: $SECRETO_1"
@@ -46,6 +47,8 @@ runs:
         export SECRETO_4="$SECRETO_4"
         export DOCKERHUB_USER="$DOCKERHUB_USER"
         export DOCKERHUB_PASSWORD="$DOCKERHUB_PASSWORD"
+
+        env
         
-        docker-compose -f docker-compose.yml up -d --remove-orphans
+        # docker-compose -f docker-compose.yml up -d --remove-orphans
       shell: bash
