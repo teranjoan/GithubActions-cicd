@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Build React App
-        uses: ./.github/actions/build-react
+        uses: teranjoan/github-actions-templates/.github/actions/build-react@main
 
   test:
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Test React App
-        uses: ./.github/actions/test-react
+        uses: teranjoan/github-actions-templates/.github/actions/test-react@main
 
   docker:
     runs-on: ubuntu-latest
@@ -32,10 +32,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Docker Build & Push
-        uses: ./.github/actions/docker-build-push
+        uses: teranjoan/github-actions-templates/.github/actions/docker-build-push@main
         with:
-          dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
-          dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            dockerhub_user: ${{ secrets.DOCKERHUB_USER }}
+            dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,4 +44,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Docker Compose Deploy
-        uses: ./.github/actions/docker-deploy-compose
+        uses: teranjoan/github-actions-templates/.github/actions/docker-deploy-compose@main
