@@ -13,32 +13,32 @@ runs:
         echo "BASE_DE_DATOS_NAME: ${{ secrets.BASE_DE_DATOS_NAME }}"
         echo "SECRETO_1: ${{ secrets.SECRETO_1 }}"
         echo "SECRETO_4: ${{ secrets.SECRETO_4 }}"
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Configure environment file
-      run: |
-        echo "Configurando entorno: ${{ inputs.environment }}"
-        if [ -f ".env.${{ inputs.environment }}" ]; then
-          cp ".env.${{ inputs.environment }}" .env
-          echo "✅ Archivo .env.${{ inputs.environment }} copiado a .env"
-          echo "Contenido del archivo .env:"
-          cat .env
-        else
-          echo "❌ Error: Archivo .env.${{ inputs.environment }} no encontrado"
-          echo "Archivos .env disponibles:"
-          ls -la .env.* 2>/dev/null || echo "No se encontraron archivos .env.*"
-          exit 1
-        fi
-      shell: bash
-    - name: Deploy con docker-compose
-      run: |
-        echo "Desplegando en entorno: ${{ inputs.environment }}"
-        # Inyectar secretos como variables de entorno para docker-compose
-        export DOCKERHUB_USER="${{ secrets.DOCKERHUB_USER }}"
-        export DOCKERHUB_PASSWORD="${{ secrets.DOCKERHUB_PASSWORD }}"
-        export DATABASE_URL="${{ secrets.DATABASE_URL }}"
-        export API_KEY="${{ secrets.API_KEY }}"
-        # Agregar más secretos según necesites
+    # - name: Checkout code
+    #   uses: actions/checkout@v3
+    # - name: Configure environment file
+    #   run: |
+    #     echo "Configurando entorno: ${{ inputs.environment }}"
+    #     if [ -f ".env.${{ inputs.environment }}" ]; then
+    #       cp ".env.${{ inputs.environment }}" .env
+    #       echo "✅ Archivo .env.${{ inputs.environment }} copiado a .env"
+    #       echo "Contenido del archivo .env:"
+    #       cat .env
+    #     else
+    #       echo "❌ Error: Archivo .env.${{ inputs.environment }} no encontrado"
+    #       echo "Archivos .env disponibles:"
+    #       ls -la .env.* 2>/dev/null || echo "No se encontraron archivos .env.*"
+    #       exit 1
+    #     fi
+    #   shell: bash
+    # - name: Deploy con docker-compose
+    #   run: |
+    #     echo "Desplegando en entorno: ${{ inputs.environment }}"
+    #     # Inyectar secretos como variables de entorno para docker-compose
+    #     export DOCKERHUB_USER="${{ secrets.DOCKERHUB_USER }}"
+    #     export DOCKERHUB_PASSWORD="${{ secrets.DOCKERHUB_PASSWORD }}"
+    #     export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+    #     export API_KEY="${{ secrets.API_KEY }}"
+    #     # Agregar más secretos según necesites
         
-        docker-compose -f docker-compose.yml up -d --remove-orphans
-      shell: bash
+    #     docker-compose -f docker-compose.yml up -d --remove-orphans
+    #   shell: bash
