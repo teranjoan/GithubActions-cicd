@@ -2,6 +2,12 @@ name: Full Pipeline
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        description: "Entorno de despliegue (dev, prd, stg, tst)"
+        required: false
+        type: string
+        default: "dev"
     secrets:
       dockerhub_user:
         required: true
@@ -44,4 +50,6 @@ jobs:
     needs: docker
     steps:
       - name: Docker Compose Deploy
-        uses: teranjoan/GithubActions/.github/actions/docker-deploy-compose@master
+        uses: teranjoan/GithubActions-cicd/.github/actions/docker-deploy-compose@master
+        with:
+          environment: ${{ inputs.environment }}

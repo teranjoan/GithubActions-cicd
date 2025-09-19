@@ -1,9 +1,32 @@
 name: Docker Compose Deploy
-description: Despliega la app usando docker-compose.
+description: Despliega la app usando docker-compose con configuración de entorno específica.
+inputs:
+  environment:
+    description: "Entorno de despliegue (dev, prd, stg, tst)"
+    required: true
+    default: "dev"
 runs:
   using: "composite"
   steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Configure environment file
+      run: |
+        echo "Configurando entorno: ${{ inputs.environment }}"
+        if [ -f ".env.${{ inputs.environment }}" ]; then
+          cp ".env.${{ inputs.environment }}" .env
+          echo "✅ Archivo .env.${{ inputs.environment }} copiado a .env"
+          echo "Contenido del archivo .env:"
+          cat .env
+        else
+          echo "❌ Error: Archivo .env.${{ inputs.environment }} no encontrado"
+          echo "Archivos .env disponibles:"
+          ls -la .env.* 2>/dev/null || echo "No se encontraron archivos .env.*"
+          exit 1
+        fi
+      shell: bash
     - name: Deploy con docker-compose
       run: |
+        echo "Desplegando en entorno: ${{ inputs.environment }}"
         docker-compose -f docker-compose.yml up -d --remove-orphans
       shell: bash
