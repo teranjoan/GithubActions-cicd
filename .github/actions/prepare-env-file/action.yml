@@ -1,0 +1,61 @@
+name: Prepare Env File
+description: Rename .env.{environment} to .env and inject secrets and variables.
+inputs:
+  environment:
+    description: "Environment for deployment (dev, prd, stg, tst)"
+    required: true
+    default: "dev"
+  
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Prepare Env => .env file (Step 1/3)
+      run: |
+        echo "Configuring .env file if it exists. ${{ inputs.environment }}"
+        if [ -f ".env.${{ inputs.environment }}" ]; then
+          cp ".env.${{ inputs.environment }}" .env
+          echo "✅ File .env.${{ inputs.environment }} copied to .env"
+        else
+          echo "⚠️  Warning: File .env.${{ inputs.environment }} not found"
+          echo "Available .env files:"
+          ls -la .env.* 2>/dev/null || echo "No .env.* files found"
+        fi
+      shell: bash
+    - name: Prepare Env => Process secrets (Step 2/3)
+      run: | 
+        # Process secrets and add them to .env
+        if [ ! -z "$ALL_SECRETS" ]; then
+          echo "🔑 Found ALL_SECRETS variable, injecting into .env"
+          # Add secrets to .env file (already in KEY=VALUE format)
+          echo "" >> .env
+          echo "# === AUTOMATICALLY ADDED SECRETS ===" >> .env
+          echo "$ALL_SECRETS" >> .env
+          echo "✅ Secrets added to .env file"
+        else
+          echo "⚠️ No secrets found in ALL_SECRETS"
+        fi
+      shell: bash
+    - name: Prepare Env => Process variables (Step 3/3)
+      run: |
+        # Process variables from ENV_VARIABLES and add them to .env
+        if [ ! -z "$ENV_VARIABLES" ]; then
+          echo "🔧 Found ENV_VARIABLES variable, injecting into .env"
+
+          # Add variables to .env file (already in KEY=VALUE format)
+          echo "" >> .env
+          echo "# === AUTOMATICALLY ADDED VARIABLES ===" >> .env
+          echo "$ENV_VARIABLES" >> .env
+
+          echo "✅ Variables added to .env file"
+        else
+          echo "⚠️  No variables found in ENV_VARIABLES"
+        fi
+      shell: bash
+    - name: Debug
+      run: |
+        # Debugging step to inspect the contents of .env
+        echo "🔍 Debugging .env file contents:"
+        cat .env || echo "No .env file found"
+      shell: bash

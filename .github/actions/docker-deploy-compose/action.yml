@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Configure environment file (.env) (Step 1/3)
+    - name: Prepare Env => .env file (Step 1/3)
       run: |
         echo "Configurando archivo .env si existe. ${{ inputs.environment }}"
         if [ -f ".env.${{ inputs.environment }}" ]; then
@@ -23,7 +23,7 @@ runs:
           ls -la .env.* 2>/dev/null || echo "No se encontraron archivos .env.*"
         fi
       shell: bash
-    - name: Process secrets  (Step 2/3)
+    - name: Prepare Env => Process secrets (Step 2/3)
       run: | 
         # Procesar secretos y agregarlos al .env
         if [ ! -z "$ALL_SECRETS" ]; then
@@ -37,7 +37,7 @@ runs:
           echo "⚠️ No se encontraron secretos en ALL_SECRETS"
         fi
       shell: bash
-    - name: Process variables (Step 3/3)
+    - name: Prepare Env => Process variables (Step 3/3)
       run: |
         # Procesar variables desde ENV_VARIABLES y agregarlos al .env
         if [ ! -z "$ENV_VARIABLES" ]; then

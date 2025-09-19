@@ -46,22 +46,24 @@ jobs:
   #         dockerhub_password: ${{ secrets.dockerhub_password }}
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}  # Esto permite acceder a las variables del entorno específico
+    environment: ${{ inputs.environment }}
     # needs: docker
     steps:
-      - name: Docker Compose Deploy
-        uses: teranjoan/GithubActions-cicd/.github/actions/docker-deploy-compose@master
+      - name: "Prepare env file for ${{ inputs.environment }}"
+        uses: teranjoan/GithubActions-cicd/.github/actions/prepare-env-file@master
         with:
           environment: ${{ inputs.environment }}
         env:
-          # Pasar secrets como variables de entorno al action en formato KEY=VALUE
+          # Pass secrets as environment variables to the action in KEY=VALUE format
           ALL_SECRETS: |
-            BASE_DE_DATOS_NAME=${{ secrets.BASE_DE_DATOS_NAME }}
-            SECRETO_1=${{ secrets.SECRETO_1 }}
-            SECRETO_4=${{ secrets.SECRETO_4 }}
-            DOCKERHUB_USER=${{ secrets.DOCKERHUB_USER }}
-            DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
+            MY_ENV_SECRET_1=${{ secrets.SECRET_1 }}
+            MY_ENV_SECRET_2=${{ secrets.SECRET_2 }}
+            MY_REPO_SECRET_1=${{ secrets.REPO_SECRET_1 }}
+            MY_REPO_SECRET_2=${{ secrets.REPO_SECRET_2 }}
           ENV_VARIABLES: |
-            # Variables adicionales para docker-compose
-            MY_ENV_VAR=${{ vars.MY_ENV_VAR }}
-            MY_REPO_VAR=${{ vars.MY_REPO_VAR }}
+            # 
+            MY_ENV_VAR_1=${{ vars.MY_ENV_VAR_1 }}
+            MY_ENV_VAR_2=${{ vars.MY_ENV_VAR_2 }}
+
+            MY_REPO_VAR_1=${{ vars.MY_REPO_VAR_1 }}
+            MY_REPO_VAR_2=${{ vars.MY_REPO_VAR_2 }}
