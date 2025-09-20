@@ -1,0 +1,136 @@
+name: Passing Values Between Jobs Demo
+description: Demonstrates how to pass variables between jobs using outputs and complex data structures
+inputs:
+  demo_prefix:
+    description: "Prefix for the generated app name"
+    required: false
+    default: "MyApp"
+outputs:
+  generated_name:
+    description: "The generated app name"
+    value: ${{ steps.generate.outputs.name }}
+  build_time:
+    description: "When the build was created"
+    value: ${{ steps.generate.outputs.time }}
+  build_number:
+    description: "Random build number generated"
+    value: ${{ steps.generate.outputs.number }}
+  app_info_json:
+    description: "Complex JSON data structure with app information"
+    value: ${{ steps.create_json.outputs.info }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate variables
+      id: generate
+      run: |
+        # Generate some variables
+        NAME="${{ inputs.demo_prefix }}-$(date +%Y%m%d)"
+        TIME=$(date +"%Y-%m-%d %H:%M:%S")
+        NUMBER=$((RANDOM % 1000))
+        
+        echo "🔧 Generated variables:"
+        echo "  NAME: $NAME"
+        echo "  TIME: $TIME"
+        echo "  NUMBER: $NUMBER"
+        
+        # Set outputs for other steps/jobs to use
+        echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "time=$TIME" >> $GITHUB_OUTPUT
+        echo "number=$NUMBER" >> $GITHUB_OUTPUT
+        
+        echo "✅ Variables saved as step outputs"
+      shell: bash
+
+    - name: Load and use variables from previous step
+      run: |
+        echo "📥 Loading variables from previous step:"
+        echo "  Generated Name: ${{ steps.generate.outputs.name }}"
+        echo "  Build Time: ${{ steps.generate.outputs.time }}"
+        echo "  Build Number: ${{ steps.generate.outputs.number }}"
+        
+        # You can also assign them to environment variables
+        APP_NAME="${{ steps.generate.outputs.name }}"
+        BUILD_TIME="${{ steps.generate.outputs.time }}"
+        BUILD_NUM="${{ steps.generate.outputs.number }}"
+        
+        echo ""
+        echo "🎯 Using variables in this step:"
+        echo "  Processing app: $APP_NAME"
+        echo "  Built at: $BUILD_TIME"
+        echo "  Build #: $BUILD_NUM"
+        
+        # Example: Use in a conditional
+        if [ "$BUILD_NUM" -gt 500 ]; then
+          echo "🚀 High build number detected!"
+        else
+          echo "📦 Standard build number"
+        fi
+      shell: bash
+
+    - name: Create complex data structure (JSON)
+      id: create_json
+      run: |
+        # Create a JSON object with the data from previous step
+        APP_INFO=$(cat << EOF
+        {
+          "name": "${{ steps.generate.outputs.name }}",
+          "buildTime": "${{ steps.generate.outputs.time }}",
+          "buildNumber": ${{ steps.generate.outputs.number }},
+          "status": "completed",
+          "environment": "demo",
+          "prefix": "${{ inputs.demo_prefix }}"
+        }
+        EOF
+        )
+        
+        echo "📦 Created complex data structure:"
+        echo "$APP_INFO" | jq '.'
+        
+        # Save as output (need to escape for GitHub)
+        echo "info<<EOF" >> $GITHUB_OUTPUT
+        echo "$APP_INFO" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Parse and use complex data
+      run: |
+        echo "🔍 Parsing complex data from previous step:"
+        
+        # Parse JSON data
+        APP_INFO='${{ steps.create_json.outputs.info }}'
+        echo "$APP_INFO" | jq '.'
+        
+        # Extract specific values
+        APP_NAME=$(echo "$APP_INFO" | jq -r '.name')
+        BUILD_NUM=$(echo "$APP_INFO" | jq -r '.buildNumber')
+        STATUS=$(echo "$APP_INFO" | jq -r '.status')
+        PREFIX=$(echo "$APP_INFO" | jq -r '.prefix')
+        
+        echo ""
+        echo "📋 Extracted values from JSON:"
+        echo "  App Name: $APP_NAME"
+        echo "  Build Number: $BUILD_NUM"
+        echo "  Status: $STATUS"
+        echo "  Original Prefix: $PREFIX"
+      shell: bash
+
+    - name: Summary
+      run: |
+        echo ""
+        echo "🎉 === DEMO SUMMARY ==="
+        echo "This action demonstrated:"
+        echo "  ✅ Generating variables in one step"
+        echo "  ✅ Using those variables in subsequent steps"
+        echo "  ✅ Creating complex JSON data structures"
+        echo "  ✅ Parsing and extracting data from JSON"
+        echo "  ✅ Exposing outputs for external use"
+        echo ""
+        echo "🔗 Action outputs available:"
+        echo "  - generated_name: ${{ steps.generate.outputs.name }}"
+        echo "  - build_time: ${{ steps.generate.outputs.time }}"
+        echo "  - build_number: ${{ steps.generate.outputs.number }}"
+        echo "  - app_info_json: Available as JSON string"
+        echo "======================="
+      shell: bash
